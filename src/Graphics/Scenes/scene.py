@@ -1,19 +1,20 @@
 import pygame
-from src.Graphics.Scenes.scene import Scene
+from abc import ABC, abstractmethod
+
 from src.Graphics.scene_manager import SceneManager
 
-class SettingsScene(Scene):
+class Scene(ABC):
     def __init__(self, scene_manager: SceneManager):
-        super().__init__(scene_manager)
+        self.scene_manager = scene_manager
 
+    @abstractmethod
     def handle_events(self, events:list[pygame.event.Event]):
         pass
 
+    @abstractmethod
     def update(self):
         pass
 
+    @abstractmethod
     def draw(self):
         pass
-
-    def handle_back_button(self):
-        self.scene_manager.change_scene("menu")

@@ -1,9 +1,10 @@
 import pygame
+from src.Graphics.Scenes.scene import Scene
 from src.Graphics.scene_manager import SceneManager
 
-class GameScene():
+class GameScene(Scene):
     def __init__(self, scene_manager: SceneManager):
-        self.scene_manager = scene_manager
+        super().__init__(scene_manager)
 
     def handle_events(self, events:list[pygame.event.Event]):
         pass

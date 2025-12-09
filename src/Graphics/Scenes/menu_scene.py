@@ -1,10 +1,11 @@
 import pygame
 from src.Graphics.Elements.button import Button
+from src.Graphics.Scenes.scene import Scene
 from src.Graphics.scene_manager import SceneManager
 
-class MenuScene():
+class MenuScene(Scene):
     def __init__(self, scene_manager: SceneManager):
-        self.scene_manager = scene_manager
+        super().__init__(scene_manager)
 
         self.selected_button = 0
 
