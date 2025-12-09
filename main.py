@@ -1,10 +1,10 @@
-from Graphics.window import Window
+from src.Graphics.window import Window
 
 def main():
-    window = Window()
+    window = Window(current_scene="menu")
     
     while window.running:
-        window.handleEvents()
+        window.handle_events()
         window.update()
         window.draw()
 
