@@ -1,5 +1,5 @@
 from enum import Enum
-import numpy as np
+from Map import StaticMapState, Map
 
 
 def clamp(n, lo, hi):
@@ -11,10 +11,6 @@ class Direction(Enum):
     RIGHT = 1
     DOWN = 2
     LEFT = 3
-
-
-class Map:
-    pass
 
 
 class Entity:
@@ -46,7 +42,7 @@ class GameLogic:
         self.entities = []
         pass
 
-    def update_game(self):
+    def update(self):
         # Update views of the entities (and allow communication)
         #  Also prevents desync where entites updated later on in the
         #  sequence see the new positions of those updated before them
@@ -58,20 +54,11 @@ class GameLogic:
             desired_dir = entity.get_movement()
 
             # Check desired direction for wall collision
-            new_pos = self.map.get_entity(len(self.pacbots) + i)
-            if desired_dir == Direction.UP:
-                new_pos[1] -= 1
-            elif desired_dir == Direction.RIGHT:
-                new_pos[0] += 1
-            elif desired_dir == Direction.DOWN:
-                new_pos[1] += 1
-            elif desired_dir == Direction.LEFT:
-                new_pos[0] -= 1
+            new_pos = self.__move_coord(
+                self.map.get_dynamic(len(self.pacbots) + i), desired_dir)
 
-            new_pos[0] = clamp(new_pos[0], 0, self.map.width)
-            new_pos[1] = clamp(new_pos[0], 0, self.map.height)
-
-            if self.map.get(new_pos) > 1:
+            check = self.map.get_static(new_pos)
+            if check is None or check > 1:
                 # Is a wall -> invalid move
                 continue
 
@@ -81,14 +68,14 @@ class GameLogic:
         dead_pacbots = []
         for i, pacbot in enumerate(self.pacbots):
             # Picked up a survivor
-            self_pos = self.map.get_entity(i)
-            if self.map.get(self_pos) == MapTile.Survivor:
-                pacbot.pickup_survivor()
-                self.map.set(self_pos, MapTile.Survivor)
+            self_pos = self.map.get_dynamic(i)
+            if self.map.get_static(self_pos) == StaticMapState.SURVIVOR:
+                pacbot.pickup()
+                self.map.set(self_pos, StaticMapState.SURVIVOR)
 
             for i in range(len(self.aliens)):
                 # Overlap with an alien
-                if self_pos == self.map.get(len(self.pacbots) + i):
+                if self_pos == self.map.get_dynamic(len(self.pacbots) + i):
                     # Remove the pacbot
                     dead_pacbots.append(i)
                     self.remaining_pacbots -= 1
@@ -98,9 +85,64 @@ class GameLogic:
         # Iterate backward to prevent indexing error
         for i in dead_pacbots[::-1]:
             self.pacbots[i] = []
-            self.map.remove_pacbot(i)
+            self.map.remove(i)
+
+        # Render update
+        self.window.update_render_data(*self.convert_to_render_data())
+
+        # Game end logic
+        if self.remaining_pacbots <= 0:
+            pass
+        if self.retrieved_survivors >= 7:
+            pass
 
     def convert_to_render_data(self):
-        entity_data = [(*self.map.get_entity(i), e.get_sprite())
+        entity_data = [(*self.map.get_dynamic(i), e.get_sprite())
                        for i, e in enumerate([*self.pacbots, *self.aliens])]
         return self.map, entity_data
+
+    def replace_survivor(self, initial_attempt):
+        if self.map.get_static(initial_attempt) == 0:
+            self.map.set(initial_attempt, 1)
+            return
+
+        checked_list = [initial_attempt]
+        check_queue = []
+        for new_pos in self.__generate_adjacent(initial_attempt):
+            if new_pos not in checked_list:
+                check_queue.append(new_pos)
+
+        while len(check_queue) != 0:
+            check_pos = check_queue[0]
+            check_queue[0] = []
+            checked_list.append(check_pos)
+
+            if self.map.get(check_pos) == 0:
+                self.map.set(initial_attempt, 1)
+                return
+
+            for new_pos in self.__generate_adjacent(check_pos):
+                if new_pos not in checked_list:
+                    check_queue.append(new_pos)
+
+    def __move_coord(self, coord, direction: Direction):
+        new_coord = coord.copy()
+        if direction == Direction.UP:
+            new_coord[1] -= 1
+        elif direction == Direction.RIGHT:
+            new_coord[0] += 1
+        elif direction == Direction.DOWN:
+            new_coord[1] += 1
+        elif direction == Direction.LEFT:
+            new_coord[0] -= 1
+
+        new_coord[0] = clamp(new_coord[0], 0, self.map.rows)
+        new_coord[1] = clamp(new_coord[0], 0, self.map.cols)
+
+        return new_coord
+
+    def __generate_adjacent(self, coord):
+        return [self.__move_coord(coord, Direction.UP),
+                self.__move_coord(coord, Direction.DOWN),
+                self.__move_coord(coord, Direction.LEFT),
+                self.__move_coord(coord, Direction.RIGHT)]

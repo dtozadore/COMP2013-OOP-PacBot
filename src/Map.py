@@ -87,6 +87,7 @@ class Map:
                 'type': DynamicMapState.ALIEN
             })
 
+    @staticmethod
     def print_map(grid):
         """Print the map grid to the console."""
         symbol_map = {
@@ -160,7 +161,7 @@ class Map:
             if entity['id'] == identifier:
                 return entity['pos']
         
-        return None # Not found
+        raise Exception("Invalid ID")
 
     def update(self, identifier, new_position):
         """
