@@ -58,7 +58,7 @@ pacbot_map = [
 ]
 
 class Map:
-    def __init__(self, dimensions, wall_initials, survivor_initials, pacbot_initials, alien_initials):
+    def __init__(self, dimensions, pacbot_initials, alien_initials):
         """
         Args:
             dimensions (tuple): (rows, cols) e.g., (10, 10)
@@ -139,24 +139,28 @@ class Map:
         if 0 <= r < self.rows and 0 <= c < self.cols:
             self.static_map[r, c] = new_state
 
-    def get(self, position):
+    def get_static(self, position):
         """
         Finds current state of given position.
         Cross references static and dynamic to find data. 
         """
         target_pos = tuple(position)
 
-        # 1) Check dynamic positions first (Dynamic layers on top of static)
-        for entity in self.dynamic_positions:
-            if tuple(entity['pos']) == target_pos:
-                return entity['type']
-
-        # 2) If no dynamic entity found, check static map
         r, c = target_pos
         if 0 <= r < self.rows and 0 <= c < self.cols:
             return self.static_map[r, c]
         
         return None # Out of bounds
+    
+    def get_dynamic(self, identifier):
+        """
+        Finds dynamic position given identifier. 
+        """
+        for entity in self.dynamic_positions:
+            if entity['id'] == identifier:
+                return entity['pos']
+        
+        return None # Not found
 
     def update(self, identifier, new_position):
         """
