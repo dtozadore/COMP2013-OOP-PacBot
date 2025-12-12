@@ -28,16 +28,11 @@ class GameScene(Scene):
         self.num_tiles_y = 8
 
         # pixels per tile
-        tile_size = min(
-            screen_width /
-            self.num_tiles_x,
-            screen_height /
-            self.num_tiles_y)
+        tile_size = min(screen_width / self.num_tiles_x, screen_height / self.num_tiles_y)
         self.tile_size = tile_size
         self.pixel_scale_factor = self.tile_size / 16
 
-        background_tile = pygame.image.load(
-            "resources/art/background/background.png")
+        background_tile = pygame.image.load("resources/art/background/background.png")
         self.background_tile = pygame.transform.scale(
             background_tile, (math.ceil(
                 self.tile_size), math.ceil(
