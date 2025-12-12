@@ -26,8 +26,7 @@ class Sprite():
 
     def draw(self, size):
         frame = self.animation_frames[self.animation_idx]
-        sprite_file = pygame.image.load(
-            frame)
+        sprite_file = pygame.image.load(frame)
         sprite = pygame.transform.scale(sprite_file, (size, size))
         
         return sprite
