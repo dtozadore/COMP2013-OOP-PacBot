@@ -29,13 +29,21 @@ KERNEL_SIZE = 3
 
 
 class GameLogic:
+    pacbot_spawn_pos = [2, 2]
+    alien_spawn_pos = [32, 22]
+
     def __init__(self, teleoperation_mode=False):
         self.pacbots: list[Entity] = []
         self.aliens: list[Entity] = []
 
         self.scenario = Scenario(name="Scenario", data_path="src\\Maps")
-        self.scenario.create_map([{"id": 0, "pos": []}, {"id": 1, "pos": []}, {"id": 2, "pos": []}, {
-            "id": 3, "pos": []}, {"id": 4, "pos": []}, {"id": 5, "pos": []}])
+        self.scenario.create_map(
+            [{"id": 0, "pos": self.pacbot_spawn_pos},
+             {"id": 1, "pos": self.pacbot_spawn_pos},
+             {"id": 2, "pos": self.pacbot_spawn_pos},
+             {"id": 3, "pos": self.alien_spawn_pos},
+             {"id": 4, "pos": self.alien_spawn_pos},
+             {"id": 5, "pos": self.alien_spawn_pos}])
 
         self.retrieved_survivors = 0
         self.remaining_pacbots = 3
@@ -47,7 +55,7 @@ class GameLogic:
         self.entities = []
         pass
 
-    def update(self) -> tuple[np.ndarray, list[Sprite]]:
+    def update(self) -> tuple[np.ndarray, list[Sprite], bool]:
         # Update views of the entities (and allow communication)
         #  Also prevents desync where entites updated later on in the
         #  sequence see the new positions of those updated before them
@@ -99,15 +107,9 @@ class GameLogic:
             self.pacbots[entity_id] = []
             self.scenario.map.remove(entity_id)
 
-        # Render update
-
         # Game end logic
-        if self.remaining_pacbots <= 0:
-            pass
-        if self.retrieved_survivors >= 7:
-            pass
-
-        return self.convert_to_render_data()
+        gameover = self.remaining_pacbots <= 0 or self.retrieved_survivors >= 7
+        return *self.convert_to_render_data(), gameover
 
     def build_kernel(self, entity_pos, entity_id):
         kernel = np.ndarray([KERNEL_SIZE, KERNEL_SIZE], StaticMapState)
