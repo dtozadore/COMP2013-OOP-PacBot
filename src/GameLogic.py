@@ -2,19 +2,12 @@ from enum import Enum
 import numpy as np
 from pathlib import Path
 
-from src.Map import StaticMapState, Map, pacbot_map
+from src.Map import StaticMapState, Map, Direction, pacbot_map
 from src.Graphics.sprite import Sprite
 
 
 def clamp(n, lo, hi):
     return max(lo, min(n, hi))
-
-
-class Direction(Enum):
-    UP = 0
-    RIGHT = 1
-    DOWN = 2
-    LEFT = 3
 
 
 class Entity:
@@ -218,16 +211,3 @@ class GameLogic:
                 self.__move_coord(coord, Direction.DOWN),
                 self.__move_coord(coord, Direction.LEFT),
                 self.__move_coord(coord, Direction.RIGHT)]
-
-
-if __name__ == "__main__":
-    l = GameLogic()
-    l.map = Map([5, 5], [], [])
-    l.map.static_map = np.array([[1, 0, 0, 0, 0],
-                                 [0, 1, 0, 0, 0],
-                                 [0, 0, 1, 0, 0],
-                                 [0, 0, 0, 1, 0],
-                                 [0, 0, 0, 0, 1]], dtype=StaticMapState)
-
-    k = l.build_kernel([0, 3], 0)
-    print(k)
