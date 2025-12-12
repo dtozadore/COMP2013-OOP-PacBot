@@ -20,8 +20,8 @@ class Entity:
     def pickup(self):
         pass
 
-    def get_sprite(self):
-        pass
+    def get_sprite(self) -> str:
+        return ""
 
 
 KERNEL_SIZE = 3
@@ -67,7 +67,7 @@ class GameLogic:
                 # Is a wall -> invalid move
                 continue
 
-            self.map.set_entity(len(self.pacbots) + entity_id, new_pos)
+            self.map.set_dynamic(len(self.pacbots) + entity_id, new_pos)
 
         # Check for custom collisions
         dead_pacbots = []
@@ -141,11 +141,11 @@ class GameLogic:
 
         if self.last_entity_data is not None:
             sprites = [
-                Sprite("", e[0], e[1], self.__check_direction(e[0:2], last_e[0:2]), False, 0, 0, [e[2]])
+                Sprite("", e[0], e[1], self.__check_direction(e[0:2], last_e[0:2]), False, 0, 0, [Path(e[2])])
                 for e, last_e in zip(entity_data, self.last_entity_data)]
         else:
             sprites = [
-                Sprite("", e[0], e[1], Direction.DOWN, False, 0, 0, [e[2]])
+                Sprite("", e[0], e[1], Direction.DOWN, False, 0, 0, [Path(e[2])])
                 for e in entity_data]
         self.last_entity_data = entity_data.copy()
 

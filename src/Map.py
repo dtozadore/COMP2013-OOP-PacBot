@@ -162,7 +162,7 @@ class Map:
         
         return None # Out of bounds
     
-    def get_dynamic(self, identifier):
+    def get_dynamic(self, identifier) -> tuple[int, int]:
         """
         Finds dynamic position given identifier. 
         """
@@ -171,20 +171,13 @@ class Map:
                 return entity['pos']
         
         raise Exception("Invalid ID")
-
-    def update(self, identifier, new_position):
-        """
-        Updates dynamic position given identifier and new position. 
-        """
-        found = False
+    def set_dynamic(self, identifier, pos):
         for entity in self.dynamic_positions:
             if entity['id'] == identifier:
-                entity['pos'] = new_position
-                found = True
-                break
+                entity['pos'] = pos
+                return
         
-        if not found:
-            print(f"Warning: Entity with ID {identifier} not found.")
+        raise Exception("Invalid ID")
 
     def remove(self, identifier):
         """
