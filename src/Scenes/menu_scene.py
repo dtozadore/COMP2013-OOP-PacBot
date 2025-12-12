@@ -1,5 +1,6 @@
 import pygame
-from src.Graphics.Elements.button import Button
+from src.Graphics.Elements.text_button import TextButton
+from src.Graphics.Elements.image_button import ImageButton
 from src.Scenes.scene import Scene
 from src.scene_manager import SceneManager
 
@@ -9,11 +10,27 @@ class MenuScene(Scene):
 
         self.selected_button = 0
 
+        # self.buttons = [
+        #     TextButton(self.scene_manager.screen, "Play", 100, 100, 100, 50, on_click=self.handle_play_button),
+        #     TextButton(self.scene_manager.screen, "Settings", 100, 300, 100, 50, on_click=self.handle_settings_button),
+        #     TextButton(self.scene_manager.screen, "Exit", 100, 500, 100, 50, on_click=self.handle_exit_button)
+        # ]
+
+        screen_width, screen_height = self.scene_manager.screen.get_size()
+
+        button_x = 0.3 * screen_width
+        button_y = screen_height / 2
+
         self.buttons = [
-            Button(self.scene_manager.screen, "Play", 100, 100, 100, 50, on_click=self.handle_play_button),
-            Button(self.scene_manager.screen, "Settings", 100, 300, 100, 50, on_click=self.handle_settings_button),
-            Button(self.scene_manager.screen, "Exit", 100, 500, 100, 50, on_click=self.handle_exit_button)
+            ImageButton(self.scene_manager.screen, "resources/art/main_screen/play_button.png", "resources/art/main_screen/play_button_hovered.png", button_x, button_y - 50, 18, 18, on_click=self.handle_play_button),
+            ImageButton(self.scene_manager.screen, "resources/art/main_screen/quit_button.png", "resources/art/main_screen/quit_button_hovered.png", button_x, button_y + 100, 18, 18, on_click=self.handle_exit_button)
         ]
+
+        # get window size
+        screen_width, screen_height = self.scene_manager.screen.get_size()
+
+        background_image = pygame.image.load("resources/art/main_screen/main_screen_default copy.png")
+        self.background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
 
     def update(self):
         pass
@@ -34,16 +51,7 @@ class MenuScene(Scene):
                     self.buttons[self.selected_button].on_click()
 
     def draw(self):
-        # Highlight the selected button (keyboard navigation)
-        for i, button in enumerate(self.buttons):
-            if i == self.selected_button:
-                button.is_keyboard_selected = True
-                button.colour = (150, 150, 255)  # Light blue for selected
-            else:
-                button.is_keyboard_selected = False
-                # Restore default color if it was highlighted by keyboard
-                if button.colour == (150, 150, 255):
-                    button.colour = button.default_colour
+        self.scene_manager.screen.blit(self.background_image, (0, 0))
         
         # Draw all buttons
         for button in self.buttons:

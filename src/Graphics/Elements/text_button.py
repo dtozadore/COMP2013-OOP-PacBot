@@ -1,7 +1,7 @@
 import pygame
 from typing import Optional
 
-class Button():
+class TextButton():
     def __init__(self, 
                 screen, 
                 text:str, 

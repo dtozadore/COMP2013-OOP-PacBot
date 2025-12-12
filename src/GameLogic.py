@@ -5,28 +5,11 @@ from pathlib import Path
 from src.Map import StaticMapState, Map, Direction
 from src.Maps.scenario import Scenario
 from src.Graphics.sprite import Sprite
+from src.entities import Entity, Pacbot, Alien, Team
 
 
 def clamp(n, lo, hi):
     return max(lo, min(n, hi))
-
-
-class Entity:
-    def update_view(self, *args):
-        pass
-
-    def get_movement(self, * args) -> Direction:
-        return Direction.UP
-
-    def pickup(self):
-        pass
-
-    def dropoff(self):
-        pass
-    has_survivor: bool
-
-    def get_sprite(self) -> str:
-        return ""
 
 
 KERNEL_SIZE = 3
@@ -37,8 +20,15 @@ class GameLogic:
     alien_spawn_pos = [32, 22]
 
     def __init__(self, teleoperation_mode=False):
-        self.pacbots: list[Entity] = []
-        self.aliens: list[Entity] = []
+        self.pacbots: list[Pacbot] = [
+            Pacbot(1, 0, ""), 
+            Pacbot(1, 1, ""), Pacbot(
+                1, 2, "")]
+        self.aliens: list[Alien] = [
+            Alien(
+                1, 3, ""), Alien(
+                1, 4, ""), Alien(
+                1, 5, "")]
 
         self.scenario = Scenario(name="Scenario", data_path="src\\Maps")
         self.scenario.create_map(
@@ -49,14 +39,19 @@ class GameLogic:
              {"id": 4, "pos": self.alien_spawn_pos},
              {"id": 5, "pos": self.alien_spawn_pos}])
 
+        self.pacbot_team = Team(
+            (self.scenario.map.cols, self.scenario.map.rows))
+        self.alien_team = Team(
+            (self.scenario.map.cols, self.scenario.map.rows))
+        for p in self.pacbots:
+            self.pacbot_team.add_entity(p)
+        for a in self.aliens:
+            self.pacbot_team.add_entity(a)
+
         self.retrieved_survivors = 0
         self.remaining_pacbots = 3
 
         self.teleoperation_mode = teleoperation_mode
-        pass
-
-    def init_game(self):
-        self.entities = []
         pass
 
     def update(self) -> tuple[np.ndarray, list[Sprite], bool]:
@@ -65,14 +60,14 @@ class GameLogic:
         #  sequence see the new positions of those updated before them
         for entity_id, entity in enumerate([*self.pacbots, *self.aliens]):
             pos = self.scenario.map.get_dynamic(entity_id)
-            kernel = self.build_kernel(entity_id, pos)
+            kernel = self.build_kernel(pos, entity_id)
 
-            entity.update_view(pos, kernel)
+            entity.update_view(kernel, pos)
 
         # Get desired movement for the aliens
         for entity_id, entity in enumerate(self.aliens):
             pos = self.scenario.map.get_dynamic(entity_id)
-            desired_dir = entity.get_movement(pos)
+            desired_dir = entity.move(pos)
 
             # Check desired direction for wall collision
             new_pos = self.__move_coord(self.scenario.map.get_dynamic(
@@ -89,7 +84,7 @@ class GameLogic:
         for pacbot_i, pacbot in enumerate(self.pacbots):
             if self.scenario.map.get_dynamic(
                     pacbot_i) == self.pacbot_spawn_pos:
-                if pacbot.has_survivor:
+                if pacbot.has_survivor():
                     pacbot.dropoff()
                     self.retrieved_survivors += 1
 
