@@ -21,6 +21,10 @@ class Entity:
     def pickup(self):
         pass
 
+    def dropoff(self):
+        pass
+    has_survivor: bool
+
     def get_sprite(self) -> str:
         return ""
 
@@ -82,6 +86,13 @@ class GameLogic:
             self.scenario.map.set_dynamic(
                 len(self.pacbots) + entity_id, new_pos)
 
+        for pacbot_i, pacbot in enumerate(self.pacbots):
+            if self.scenario.map.get_dynamic(
+                    pacbot_i) == self.pacbot_spawn_pos:
+                if pacbot.has_survivor:
+                    pacbot.dropoff()
+                    self.retrieved_survivors += 1
+
         # Check for custom collisions
         dead_pacbots = []
         for entity_id, pacbot in enumerate(self.pacbots):
@@ -101,6 +112,7 @@ class GameLogic:
                     self.remaining_pacbots -= 1
 
                     # Replace the survivor on the map
+                    self.replace_survivor(self_pos)
 
         # Iterate backward to prevent indexing error
         for entity_id in dead_pacbots[::-1]:
