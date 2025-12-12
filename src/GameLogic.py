@@ -2,7 +2,8 @@ from enum import Enum
 import numpy as np
 from pathlib import Path
 
-from src.Map import StaticMapState, Map, Direction, pacbot_map
+from src.Map import StaticMapState, Map, Direction
+from src.Maps.scenario import Scenario
 from src.Graphics.sprite import Sprite
 
 
@@ -29,9 +30,12 @@ KERNEL_SIZE = 3
 
 class GameLogic:
     def __init__(self, teleoperation_mode=False):
-        self.map: Map
         self.pacbots: list[Entity] = []
         self.aliens: list[Entity] = []
+
+        self.scenario = Scenario(name="Scenario", data_path="src\\Maps")
+        self.scenario.create_map([{"id": 0, "pos": []}, {"id": 1, "pos": []}, {"id": 2, "pos": []}, {
+            "id": 3, "pos": []}, {"id": 4, "pos": []}, {"id": 5, "pos": []}])
 
         self.retrieved_survivors = 0
         self.remaining_pacbots = 3
@@ -48,39 +52,41 @@ class GameLogic:
         #  Also prevents desync where entites updated later on in the
         #  sequence see the new positions of those updated before them
         for entity_id, entity in enumerate([*self.pacbots, *self.aliens]):
-            pos = self.map.get_dynamic(entity_id)
+            pos = self.scenario.map.get_dynamic(entity_id)
             kernel = self.build_kernel(entity_id, pos)
 
             entity.update_view(pos, kernel)
 
         # Get desired movement for the aliens
         for entity_id, entity in enumerate(self.aliens):
-            pos = self.map.get_dynamic(entity_id)
+            pos = self.scenario.map.get_dynamic(entity_id)
             desired_dir = entity.get_movement(pos)
 
             # Check desired direction for wall collision
-            new_pos = self.__move_coord(self.map.get_dynamic(
+            new_pos = self.__move_coord(self.scenario.map.get_dynamic(
                 len(self.pacbots) + entity_id), desired_dir)
 
-            check = self.map.get_static(new_pos)
+            check = self.scenario.map.get_static(new_pos)
             if check is None or check > 1:
                 # Is a wall -> invalid move
                 continue
 
-            self.map.set_dynamic(len(self.pacbots) + entity_id, new_pos)
+            self.scenario.map.set_dynamic(
+                len(self.pacbots) + entity_id, new_pos)
 
         # Check for custom collisions
         dead_pacbots = []
         for entity_id, pacbot in enumerate(self.pacbots):
             # Picked up a survivor
-            self_pos = self.map.get_dynamic(entity_id)
-            if self.map.get_static(self_pos) == StaticMapState.SURVIVOR:
+            self_pos = self.scenario.map.get_dynamic(entity_id)
+            if self.scenario.map.get_static(
+                    self_pos) == StaticMapState.SURVIVOR:
                 pacbot.pickup()
-                self.map.set(self_pos, StaticMapState.SURVIVOR)
+                self.scenario.map.set(self_pos, StaticMapState.SURVIVOR)
 
             for entity_id in range(len(self.aliens)):
                 # Overlap with an alien
-                if self_pos == self.map.get_dynamic(
+                if self_pos == self.scenario.map.get_dynamic(
                         len(self.pacbots) + entity_id):
                     # Remove the pacbot
                     dead_pacbots.append(entity_id)
@@ -91,7 +97,7 @@ class GameLogic:
         # Iterate backward to prevent indexing error
         for entity_id in dead_pacbots[::-1]:
             self.pacbots[entity_id] = []
-            self.map.remove(entity_id)
+            self.scenario.map.remove(entity_id)
 
         # Render update
 
@@ -114,20 +120,20 @@ class GameLogic:
                 # Bounds check
                 x = entity_pos[0] + i - offst
                 y = entity_pos[1] + j - offst
-                if x < 0 or x >= self.map.cols or y < 0 or y >= self.map.rows:
+                if x < 0 or x >= self.scenario.map.cols or y < 0 or y >= self.scenario.map.rows:
                     continue
 
-                kernel[j, i] = self.map.get_static([x, y])
+                kernel[j, i] = self.scenario.map.get_static([x, y])
 
                 for e_check_i, e_check in enumerate(self.pacbots):
                     if e_check_i == entity_id:
                         continue
-                    if self.map.get_dynamic(e_check_i) == [x, y]:
+                    if self.scenario.map.get_dynamic(e_check_i) == [x, y]:
                         kernel[j, i] = StaticMapState.TMP_PACBOT
                 for e_check_i, e_check in enumerate(self.pacbots):
                     if e_check_i + len(self.pacbots) == entity_id:
                         continue
-                    if self.map.get_dynamic(
+                    if self.scenario.map.get_dynamic(
                             e_check_i + len(self.pacbots)) == [x, y]:
                         kernel[j, i] = StaticMapState.TMP_ALIEN
         return kernel
@@ -136,7 +142,7 @@ class GameLogic:
         if not hasattr(self, "last_entity_data"):
             self.last_entity_data = None
 
-        entity_data = [(*self.map.get_dynamic(i), e.get_sprite())
+        entity_data = [(*self.scenario.map.get_dynamic(i), e.get_sprite())
                        for i, e in enumerate([*self.pacbots, *self.aliens])]
 
         if self.last_entity_data is not None:
@@ -149,7 +155,7 @@ class GameLogic:
                 for e in entity_data]
         self.last_entity_data = entity_data.copy()
 
-        return self.map.static_map, sprites
+        return self.scenario.map.static_map, sprites
 
     def __check_direction(self, current, last) -> Direction:
         dx = current[0] - last[0]
@@ -167,8 +173,8 @@ class GameLogic:
             return Direction.DOWN
 
     def replace_survivor(self, initial_attempt):
-        if self.map.get_static(initial_attempt) == 0:
-            self.map.set(initial_attempt, 1)
+        if self.scenario.map.get_static(initial_attempt) == 0:
+            self.scenario.map.set(initial_attempt, 1)
             return
 
         checked_list = [initial_attempt]
@@ -182,8 +188,8 @@ class GameLogic:
             check_queue[0] = []
             checked_list.append(check_pos)
 
-            if self.map.get_static(check_pos) == 0:
-                self.map.set(initial_attempt, 1)
+            if self.scenario.map.get_static(check_pos) == 0:
+                self.scenario.map.set(initial_attempt, 1)
                 return
 
             for new_pos in self.__generate_adjacent(check_pos):
@@ -201,8 +207,8 @@ class GameLogic:
         elif direction == Direction.LEFT:
             new_coord[0] -= 1
 
-        new_coord[0] = clamp(new_coord[0], 0, self.map.rows)
-        new_coord[1] = clamp(new_coord[0], 0, self.map.cols)
+        new_coord[0] = clamp(new_coord[0], 0, self.scenario.map.rows)
+        new_coord[1] = clamp(new_coord[0], 0, self.scenario.map.cols)
 
         return new_coord
 
