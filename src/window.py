@@ -39,6 +39,7 @@ class Window():
         self.scenes[self.current_scene].handle_events(events)
 
     def update(self):
+        self.scenes[self.current_scene].update()
         pygame.display.update()
 
     def draw(self):
