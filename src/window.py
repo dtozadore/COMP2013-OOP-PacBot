@@ -3,7 +3,7 @@ import sys
 from src.scene_manager import SceneManager
 
 class Window():
-    def __init__(self, width:int=800, height:int=600, title:str="Game", current_scene:str="menu"):
+    def __init__(self, width:int=1280, height:int=720, title:str="Game", current_scene:str="menu"):
         pygame.init()
         self.width = width
         self.height = height

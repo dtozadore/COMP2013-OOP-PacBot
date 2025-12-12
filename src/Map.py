@@ -1,7 +1,7 @@
 from enum import Enum
 import numpy as np
 
-# Define static map states using an enumeration for clarity
+# Define static map swatates using an enumeration for clarity
 class StaticMapState(Enum):
     INVALID = -1
     BLANK = 0
@@ -178,6 +178,12 @@ class Map:
                 return
         
         raise Exception("Invalid ID")
+
+    def get(self, i, j):
+        if 0 <= i < self.rows and 0 <= j < self.cols:
+            return self.static_map[i, j]
+        
+        return None # Out of bounds
 
     def remove(self, identifier):
         """
