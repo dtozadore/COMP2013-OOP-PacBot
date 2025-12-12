@@ -258,5 +258,5 @@ if __name__ == "__main__":
         print(f"Move {i+1}: Alien at {new_pos}, distance to Pacbot: {distance:.2f}")
         
         if new_pos == pacbot.pos:
-            print("🎯 Alien caught the Pacbot!")
+            print("Alien caught the Pacbot!")
             break
