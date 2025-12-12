@@ -12,7 +12,7 @@ def clamp(n, lo, hi):
     return max(lo, min(n, hi))
 
 
-KERNEL_SIZE = 3
+KERNEL_SIZE = 7
 
 
 class GameLogic:
@@ -22,21 +22,20 @@ class GameLogic:
     def __init__(self, teleoperation_mode=False):
         self.pacbots: list[Pacbot] = [
             Pacbot(1, 0, ""), 
-            Pacbot(1, 1, ""), Pacbot(
-                1, 2, "")]
+            Pacbot(1, 1, ""), 
+            Pacbot(1, 2, "")]
         self.aliens: list[Alien] = [
-            Alien(
-                1, 3, ""), Alien(
-                1, 4, ""), Alien(
-                1, 5, "")]
+            Alien(1, 3, ""), 
+            Alien(1, 4, ""), 
+            Alien(1, 5, "")]
 
         self.scenario = Scenario(name="Scenario", data_path="src\\Maps")
         self.scenario.create_map(
             [{"id": 0, "pos": self.pacbot_spawn_pos},
              {"id": 1, "pos": self.pacbot_spawn_pos},
              {"id": 2, "pos": self.pacbot_spawn_pos},
-             {"id": 3, "pos": [32, 22]},
-             {"id": 4, "pos": [32, 20]},
+             {"id": 3, "pos": [3, 4]},
+             {"id": 4, "pos": [28, 20]},
              {"id": 5, "pos": [31, 21]}])
 
         self.pacbot_team = Team(
@@ -61,7 +60,6 @@ class GameLogic:
         for entity_id, entity in enumerate([*self.pacbots, *self.aliens]):
             pos = self.scenario.map.get_dynamic(entity_id)
             kernel = self.build_kernel(pos, entity_id)
-            print(kernel)
 
             entity.update_view(kernel, pos)
 
@@ -72,10 +70,8 @@ class GameLogic:
 
             # Check desired direction for wall collision
             new_pos = self.__move_coord(pos, desired_dir)
-            print(pos, new_pos)
 
             check = self.scenario.map.get_static(new_pos)
-            print(check)
             if check is None or check > 1:
                 # Is a wall -> invalid move
                 continue

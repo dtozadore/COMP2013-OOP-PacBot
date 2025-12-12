@@ -175,7 +175,6 @@ class Map:
         for entity in self.dynamic_positions:
             if entity['id'] == identifier:
                 entity['pos'] = pos
-                print(identifier)
                 return
         
         raise Exception("Invalid ID")

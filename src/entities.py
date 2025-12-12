@@ -158,7 +158,7 @@ class Alien(Entity):
 
         if dx > 0: return Direction.LEFT
         if dx < 0: return Direction.RIGHT
-        if dy > 0: return Direction.DOWN
+        if dy < 0: return Direction.DOWN
         return Direction.UP
 
 # =========================
