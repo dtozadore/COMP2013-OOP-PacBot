@@ -2,6 +2,7 @@ import pygame
 from src.Scenes.scene import Scene
 from src.scene_manager import SceneManager
 from src.GameLogic import GameLogic
+from src.Map import StaticMapState
 import math
 
 class GameScene(Scene):
@@ -27,6 +28,22 @@ class GameScene(Scene):
         background_tile = pygame.image.load("resources/art/background/background.png")
         self.background_tile = pygame.transform.scale(background_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
 
+        wall_vertical_tile = pygame.image.load("resources/art/background/walls/wall_vertical.png")
+        self.wall_vertical_tile = pygame.transform.scale(wall_vertical_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
+
+        wall_horizontal_tile = pygame.image.load("resources/art/background/walls/wall_horizontal.png")
+        self.wall_horizontal_tile = pygame.transform.scale(wall_horizontal_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
+
+        wall_t_up_tile = pygame.image.load("resources/art/background/walls/wall_t_up.png")
+        self.wall_t_up_tile = pygame.transform.scale(wall_t_up_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
+
+        wall_t_down_tile = pygame.image.load("resources/art/background/walls/wall_t_down.png")
+        self.wall_t_down_tile = pygame.transform.scale(wall_t_down_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
+        
+        
+        
+        
+
     def handle_events(self, events:list[pygame.event.Event]):
         pass
 
@@ -50,7 +67,23 @@ class GameScene(Scene):
                 self.scene_manager.screen.blit(self.background_tile, (x, y))
 
     def draw_map(self):
-        pass
+        for i in range(self.num_tiles_x):
+            for j in range(self.num_tiles_y):
+                # Blit the scaled 16x16 pixel art at each tile position
+                x = i * self.tile_size
+                y = j * self.tile_size
+
+                #tile = self.game_logic.map.get(i, j)
+                tile = None
+                if tile is not None:
+                    if tile == StaticMapState.WALL_VERTICAL:
+                        self.scene_manager.screen.blit(self.wall_vertical_tile, (x, y))
+                    elif tile == StaticMapState.WALL_HORIZONTAL:
+                        self.scene_manager.screen.blit(self.wall_horizontal_tile, (x, y))
+                    elif tile == StaticMapState.WALL_T_UP:
+                        self.scene_manager.screen.blit(self.wall_t_up_tile, (x, y))
+                    elif tile == StaticMapState.WALL_T_DOWN:
+                        self.scene_manager.screen.blit(self.wall_t_down_tile, (x, y))
 
     def draw_entities(self):
         pass

@@ -25,7 +25,7 @@ class Scenario:
 
 
 # Example usage:if __name__ == "__main__":
-scenario = Scenario(name="Scenario", data_path=".\Week 10")
+scenario = Scenario(name="Scenario", data_path="src/Maps/")
 
 scenario.load_data()
 # scenario.preprocess_data()

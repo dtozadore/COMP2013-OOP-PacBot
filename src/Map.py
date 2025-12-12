@@ -177,6 +177,12 @@ class Map:
         if not found:
             print(f"Warning: Entity with ID {identifier} not found.")
 
+    def get(self, i, j):
+        if 0 <= i < self.rows and 0 <= j < self.cols:
+            return self.static_map[i, j]
+        
+        return None # Out of bounds
+
     def remove(self, identifier):
         """
         Removes item from dynamic position matrix given identifier. 
