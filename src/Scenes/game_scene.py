@@ -1,6 +1,6 @@
 import pygame
-from src.Graphics.Scenes.scene import Scene
-from src.Graphics.scene_manager import SceneManager
+from src.Scenes.scene import Scene
+from src.scene_manager import SceneManager
 
 class GameScene(Scene):
     def __init__(self, scene_manager: SceneManager):

@@ -1,4 +1,4 @@
-from src.Graphics.window import Window
+from src.window import Window
 
 def main():
     window = Window(current_scene="menu")
