@@ -1,6 +1,6 @@
 import pygame
 import sys
-from src.Graphics.scene_manager import SceneManager
+from src.scene_manager import SceneManager
 
 class Window():
     def __init__(self, width:int=800, height:int=600, title:str="Game", current_scene:str="menu"):
@@ -19,9 +19,9 @@ class Window():
             self.shutdown
         )
         
-        from src.Graphics.Scenes.menu_scene import MenuScene
-        from src.Graphics.Scenes.game_scene import GameScene
-        from src.Graphics.Scenes.settings_scene import SettingsScene
+        from src.Scenes.menu_scene import MenuScene
+        from src.Scenes.game_scene import GameScene
+        from src.Scenes.settings_scene import SettingsScene
 
         self.scenes = {
             "menu": MenuScene(self.scene_manager),

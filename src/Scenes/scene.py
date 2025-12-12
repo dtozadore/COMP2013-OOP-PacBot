@@ -1,11 +1,15 @@
 import pygame
 from abc import ABC, abstractmethod
 
-from src.Graphics.scene_manager import SceneManager
+from src.scene_manager import SceneManager
 
 class Scene(ABC):
     def __init__(self, scene_manager: SceneManager):
         self.scene_manager = scene_manager
+
+    # @abstractmethod
+    # def load(self):
+    #     pass
 
     @abstractmethod
     def handle_events(self, events:list[pygame.event.Event]):
