@@ -2,19 +2,13 @@ from enum import Enum
 import numpy as np
 from pathlib import Path
 
-from Map import StaticMapState, Map
-from Graphics.sprite import Sprite
-
+from src.Map import StaticMapState, Map
+from src.Graphics.sprite import Sprite
+from src.direction import Direction
 
 def clamp(n, lo, hi):
     return max(lo, min(n, hi))
 
-
-class Direction(Enum):
-    UP = 0
-    RIGHT = 1
-    DOWN = 2
-    LEFT = 3
 
 
 class Entity:
