@@ -1,5 +1,9 @@
 from enum import Enum
+import numpy as np
+from pathlib import Path
+
 from Map import StaticMapState, Map
+from Graphics.sprite import Sprite
 
 
 def clamp(n, lo, hi):
@@ -21,16 +25,11 @@ class Entity:
         return Direction.UP
 
 
-class Window:
-    pass
-
-
 class GameLogic:
     def __init__(self, teleoperation_mode=False):
         self.map: Map
         self.pacbots: list[Entity] = []
         self.aliens: list[Entity] = []
-        self.window: Window
 
         self.retrieved_survivors = 0
         self.remaining_pacbots = 3
@@ -42,7 +41,7 @@ class GameLogic:
         self.entities = []
         pass
 
-    def update(self):
+    def update(self) -> tuple[np.ndarray, list[Sprite]]:
         # Update views of the entities (and allow communication)
         #  Also prevents desync where entites updated later on in the
         #  sequence see the new positions of those updated before them
@@ -88,7 +87,6 @@ class GameLogic:
             self.map.remove(i)
 
         # Render update
-        self.window.update_render_data(*self.convert_to_render_data())
 
         # Game end logic
         if self.remaining_pacbots <= 0:
@@ -96,10 +94,41 @@ class GameLogic:
         if self.retrieved_survivors >= 7:
             pass
 
+        return self.convert_to_render_data()
+
     def convert_to_render_data(self):
+        if not hasattr(self, "last_entity_data"):
+            self.last_entity_data = None
+
         entity_data = [(*self.map.get_dynamic(i), e.get_sprite())
                        for i, e in enumerate([*self.pacbots, *self.aliens])]
-        return self.map, entity_data
+
+        if self.last_entity_data is not None:
+            sprites = [
+                Sprite("", e[0], e[1], self.__check_direction(e[0:2], last_e[0:2]), False, 0, 0, [e[2]])
+                for e, last_e in zip(entity_data, self.last_entity_data)]
+        else:
+            sprites = [
+                Sprite("", e[0], e[1], Direction.DOWN, False, 0, 0, [e[2]])
+                for e in entity_data]
+        self.last_entity_data = entity_data.copy()
+
+        return self.map.static_map, sprites
+
+    def __check_direction(self, current, last) -> Direction:
+        dx = current[0] - last[0]
+        dy = current[1] - last[1]
+
+        if dx < 0:
+            return Direction.LEFT
+        elif dx > 0:
+            return Direction.RIGHT
+        elif dy < 0:
+            return Direction.UP
+        elif dy > 0:
+            return Direction.DOWN
+        else:
+            return Direction.DOWN
 
     def replace_survivor(self, initial_attempt):
         if self.map.get_static(initial_attempt) == 0:

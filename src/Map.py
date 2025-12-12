@@ -69,7 +69,7 @@ class Map:
         """
 
         self.rows, self.cols = dimensions
-        self.static_map = np.full((self.rows, self.cols), StaticMapState.BLANK, dtype=int)
+        self.static_map : np.ndarray = np.full((self.rows, self.cols), StaticMapState.BLANK, dtype=int)
         self.dynamic_positions = []
         
         # Helper to format data uniformly
