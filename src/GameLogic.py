@@ -2,21 +2,36 @@ from enum import Enum
 import numpy as np
 from pathlib import Path
 
-from src.Map import StaticMapState, Map
+from src.Map import StaticMapState, Map, pacbot_map
 from src.Graphics.sprite import Sprite
-from src.direction import Direction
+
 
 def clamp(n, lo, hi):
     return max(lo, min(n, hi))
 
 
+class Direction(Enum):
+    UP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
+
 
 class Entity:
-    def update_view(self):
+    def update_view(self, *args):
         pass
 
-    def get_movement(self) -> Direction:
+    def get_movement(self, * args) -> Direction:
         return Direction.UP
+
+    def pickup(self):
+        pass
+
+    def get_sprite(self):
+        pass
+
+
+KERNEL_SIZE = 3
 
 
 class GameLogic:
@@ -39,46 +54,51 @@ class GameLogic:
         # Update views of the entities (and allow communication)
         #  Also prevents desync where entites updated later on in the
         #  sequence see the new positions of those updated before them
-        for entity in [*self.pacbots, *self.aliens]:
-            entity.update_view()
+        for entity_id, entity in enumerate([*self.pacbots, *self.aliens]):
+            pos = self.map.get_dynamic(entity_id)
+            kernel = self.build_kernel(entity_id, pos)
+
+            entity.update_view(pos, kernel)
 
         # Get desired movement for the aliens
-        for i, entity in enumerate(self.aliens):
-            desired_dir = entity.get_movement()
+        for entity_id, entity in enumerate(self.aliens):
+            pos = self.map.get_dynamic(entity_id)
+            desired_dir = entity.get_movement(pos)
 
             # Check desired direction for wall collision
-            new_pos = self.__move_coord(
-                self.map.get_dynamic(len(self.pacbots) + i), desired_dir)
+            new_pos = self.__move_coord(self.map.get_dynamic(
+                len(self.pacbots) + entity_id), desired_dir)
 
             check = self.map.get_static(new_pos)
             if check is None or check > 1:
                 # Is a wall -> invalid move
                 continue
 
-            self.map.set_entity(len(self.pacbots) + i, new_pos)
+            self.map.set_entity(len(self.pacbots) + entity_id, new_pos)
 
         # Check for custom collisions
         dead_pacbots = []
-        for i, pacbot in enumerate(self.pacbots):
+        for entity_id, pacbot in enumerate(self.pacbots):
             # Picked up a survivor
-            self_pos = self.map.get_dynamic(i)
+            self_pos = self.map.get_dynamic(entity_id)
             if self.map.get_static(self_pos) == StaticMapState.SURVIVOR:
                 pacbot.pickup()
                 self.map.set(self_pos, StaticMapState.SURVIVOR)
 
-            for i in range(len(self.aliens)):
+            for entity_id in range(len(self.aliens)):
                 # Overlap with an alien
-                if self_pos == self.map.get_dynamic(len(self.pacbots) + i):
+                if self_pos == self.map.get_dynamic(
+                        len(self.pacbots) + entity_id):
                     # Remove the pacbot
-                    dead_pacbots.append(i)
+                    dead_pacbots.append(entity_id)
                     self.remaining_pacbots -= 1
 
                     # Replace the survivor on the map
 
         # Iterate backward to prevent indexing error
-        for i in dead_pacbots[::-1]:
-            self.pacbots[i] = []
-            self.map.remove(i)
+        for entity_id in dead_pacbots[::-1]:
+            self.pacbots[entity_id] = []
+            self.map.remove(entity_id)
 
         # Render update
 
@@ -89,6 +109,35 @@ class GameLogic:
             pass
 
         return self.convert_to_render_data()
+
+    def build_kernel(self, entity_pos, entity_id):
+        kernel = np.ndarray([KERNEL_SIZE, KERNEL_SIZE], StaticMapState)
+        kernel.fill(StaticMapState.INVALID)
+
+        # Build out the kernel
+        offst = int(np.floor(KERNEL_SIZE / 2))
+        for i in range(KERNEL_SIZE):
+            for j in range(KERNEL_SIZE):
+                # Bounds check
+                x = entity_pos[0] + i - offst
+                y = entity_pos[1] + j - offst
+                if x < 0 or x >= self.map.cols or y < 0 or y >= self.map.rows:
+                    continue
+
+                kernel[j, i] = self.map.get_static([x, y])
+
+                for e_check_i, e_check in enumerate(self.pacbots):
+                    if e_check_i == entity_id:
+                        continue
+                    if self.map.get_dynamic(e_check_i) == [x, y]:
+                        kernel[j, i] = StaticMapState.TMP_PACBOT
+                for e_check_i, e_check in enumerate(self.pacbots):
+                    if e_check_i + len(self.pacbots) == entity_id:
+                        continue
+                    if self.map.get_dynamic(
+                            e_check_i + len(self.pacbots)) == [x, y]:
+                        kernel[j, i] = StaticMapState.TMP_ALIEN
+        return kernel
 
     def convert_to_render_data(self):
         if not hasattr(self, "last_entity_data"):
@@ -140,7 +189,7 @@ class GameLogic:
             check_queue[0] = []
             checked_list.append(check_pos)
 
-            if self.map.get(check_pos) == 0:
+            if self.map.get_static(check_pos) == 0:
                 self.map.set(initial_attempt, 1)
                 return
 
@@ -169,3 +218,16 @@ class GameLogic:
                 self.__move_coord(coord, Direction.DOWN),
                 self.__move_coord(coord, Direction.LEFT),
                 self.__move_coord(coord, Direction.RIGHT)]
+
+
+if __name__ == "__main__":
+    l = GameLogic()
+    l.map = Map([5, 5], [], [])
+    l.map.static_map = np.array([[1, 0, 0, 0, 0],
+                                 [0, 1, 0, 0, 0],
+                                 [0, 0, 1, 0, 0],
+                                 [0, 0, 0, 1, 0],
+                                 [0, 0, 0, 0, 1]], dtype=StaticMapState)
+
+    k = l.build_kernel([0, 3], 0)
+    print(k)

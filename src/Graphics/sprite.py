@@ -1,15 +1,16 @@
-from src.direction import Direction
+from src.Map import Direction
 from pathlib import Path
 
+
 class Sprite():
-    def __init__(self, name:str, 
-                        x:int=0, 
-                        y:int=0, 
-                        direction:Direction=Direction.UP, 
-                        animate:bool=False, 
-                        animation_idx:int=0, 
-                        animation_speed:int=1, 
-                        animation_frames:list[Path]=[]):
+    def __init__(self, name: str,
+                 x: int = 0,
+                 y: int = 0,
+                 direction: Direction = Direction.UP,
+                 animate: bool = False,
+                 animation_idx: int = 0,
+                 animation_speed: int = 1,
+                 animation_frames: list[Path] = []):
         self.name = name
         self.x = x
         self.y = y

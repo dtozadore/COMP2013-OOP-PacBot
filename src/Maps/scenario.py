@@ -1,7 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
-from Map import Map, StaticMapState
+from src.Map import Map, StaticMapState
+
 
 class Scenario:
     def __init__(self, name, data_path):
@@ -31,10 +32,10 @@ class Scenario:
         """Create a Map object from the loaded scenario data."""
         if self.np_data is None:
             raise ValueError("No data loaded. Call load_data() first.")
-        
+
         pacbot_initials = pacbot_initials or [{'id': 'pacbot', 'pos': (1, 1)}]
         alien_initials = alien_initials or []
-        
+
         dimensions = self.get_dimensions()
         self.map = Map(dimensions, pacbot_initials, alien_initials)
         self.map.set_map(self.np_data)
@@ -56,14 +57,14 @@ class Scenario:
 
 # Example usage
 if __name__ == "__main__":
-    scenario = Scenario(name="Scenario", data_path="src\Maps")
+    scenario = Scenario(name="Scenario", data_path="src\\Maps")
     scenario.load_data()
-    
+
     # Create a game map from the scenario
     game_map = scenario.create_map(
         pacbot_initials=[{'id': 'player1', 'pos': (1, 1)}],
         alien_initials=[{'id': 'alien1', 'pos': (5, 5)}]
     )
-    
+
     print(f"Map dimensions: {scenario.get_dimensions()}")
     print(f"Survivors to collect: {scenario.count_survivors()}")

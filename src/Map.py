@@ -3,6 +3,7 @@ import numpy as np
 
 # Define static map states using an enumeration for clarity
 class StaticMapState(Enum):
+    INVALID = -1
     BLANK = 0
     SURVIVOR = 1
     WALL_VERTICAL = 2
@@ -16,10 +17,18 @@ class StaticMapState(Enum):
     WALL_CORNER_SE = 10     # ┘
     WALL_CORNER_SW = 11     # └
     WALL_CROSS = 12         # +
+    TMP_PACBOT = 13
+    TMP_ALIEN = 14
 
 class DynamicMapState(Enum):
     PACBOT = 0
     ALIEN = 1
+    
+class Direction(Enum):
+    UP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
 
 pacbot_map = [
     # Row 0: Top Boundary
@@ -69,7 +78,7 @@ class Map:
         """
 
         self.rows, self.cols = dimensions
-        self.static_map : np.ndarray = np.full((self.rows, self.cols), StaticMapState.BLANK.value, dtype=int)
+        self.static_map : np.ndarray = np.full((self.rows, self.cols), StaticMapState.BLANK, dtype=StaticMapState)
         self.dynamic_positions = []
         
         # Helper to format data uniformly
