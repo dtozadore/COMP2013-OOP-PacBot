@@ -83,7 +83,7 @@ class Entity(ABC):
 # =========================
 class Pacbot(Entity):
     def __init__(self, speed, id, name, icon = "", team=None, pos=None):
-        super().__init__(speed, id, "resources/pacbot/pacbot_down.png", name, team, pos)
+        super().__init__(speed, id, "resources/art/pacbot/pacbot_down.png", name, team, pos)
         self.carry_survivor = False
 
     def pickup(self):
@@ -104,7 +104,7 @@ class Pacbot(Entity):
 # =========================
 class Alien(Entity):
     def __init__(self, speed, id, name, team=None, pos=None):
-        super().__init__(speed, id, "resources/pacbot/pacbot_down.png", name, team, pos)
+        super().__init__(speed, id, "resources/art/pacbot/pacbot_down.png", name, team, pos)
 
     def move(self, pos=None) -> Direction:
         # Use stored position if not provided
