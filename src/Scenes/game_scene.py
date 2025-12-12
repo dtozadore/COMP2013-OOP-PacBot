@@ -24,8 +24,8 @@ class GameScene(Scene):
         self.map: np.ndarray = None
         self.entities: list[Sprite] = []
 
-        self.num_tiles_x = 12
-        self.num_tiles_y = 8
+        self.num_tiles_x = self.game_logic.scenario.map.cols
+        self.num_tiles_y = self.game_logic.scenario.map.rows
 
         # pixels per tile
         tile_size = min(screen_width / self.num_tiles_x, screen_height / self.num_tiles_y)
@@ -102,7 +102,7 @@ class GameScene(Scene):
                 x = i * self.tile_size
                 y = j * self.tile_size
 
-                tile = self.map[i, j]
+                tile = self.map[j, i]
 
                 if tile is not None:
                     if tile == StaticMapState.WALL_VERTICAL:
@@ -138,7 +138,8 @@ class GameScene(Scene):
 
     def draw_entities(self):
         for entity in self.entities:
-            entity.draw()
+            sprite = entity.draw(self.tile_size)
+            self.scene_manager.screen.blit(sprite, (entity.x*self.tile_size, entity.y*self.tile_size))
 
     def draw_particles(self):
         pass

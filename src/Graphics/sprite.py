@@ -1,5 +1,6 @@
 from src.Map import Direction
 from pathlib import Path
+import pygame
 
 
 class Sprite():
@@ -23,8 +24,13 @@ class Sprite():
     def update(self):
         pass
 
-    def draw(self):
-        pass
+    def draw(self, size):
+        frame = self.animation_frames[self.animation_idx]
+        sprite_file = pygame.image.load(
+            frame)
+        sprite = pygame.transform.scale(sprite_file, (size, size))
+        
+        return sprite
 
     def update_animation(self):
         pass
