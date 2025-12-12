@@ -1,7 +1,7 @@
 from enum import Enum
 import numpy as np
 
-# Define static map states using an enumeration for clarity
+# Define static map swatates using an enumeration for clarity
 class StaticMapState(Enum):
     INVALID = -1
     BLANK = 0
