@@ -1,4 +1,4 @@
-from src.GameLogic import Direction
+from src.direction import Direction
 from pathlib import Path
 
 class Sprite():
