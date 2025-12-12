@@ -156,7 +156,7 @@ class Map:
         """
         target_pos = tuple(position)
 
-        r, c = target_pos
+        c, r = target_pos
         if 0 <= r < self.rows and 0 <= c < self.cols:
             return self.static_map[r, c]
         
@@ -170,11 +170,12 @@ class Map:
             if entity['id'] == identifier:
                 return entity['pos']
         
-        raise Exception("Invalid ID")
+        raise Exception(f"Invalid ID {identifier}")
     def set_dynamic(self, identifier, pos):
         for entity in self.dynamic_positions:
             if entity['id'] == identifier:
                 entity['pos'] = pos
+                print(identifier)
                 return
         
         raise Exception("Invalid ID")

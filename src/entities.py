@@ -127,7 +127,7 @@ class Alien(Entity):
         )
         if step:
             self.pos = step
-            return step
+            return self.__direction(pos,step)
 
         # 2. Hunt Survivors
         step = bfs_next_step(
@@ -138,7 +138,7 @@ class Alien(Entity):
         )
         if step:
             self.pos = step
-            return step
+            return self.__direction(pos,step)
 
         # 3. Explore unexplored
         step = bfs_next_step(
@@ -149,10 +149,17 @@ class Alien(Entity):
         )
         if step:
             self.pos = step
-            return step
+            return self.__direction(pos,step)
 
         return Direction.DOWN
+    def __direction(self, pos, step):
+        dx = step[0] - pos[0]
+        dy = step[1] - pos[1]
 
+        if dx > 0: return Direction.LEFT
+        if dx < 0: return Direction.RIGHT
+        if dy > 0: return Direction.DOWN
+        return Direction.UP
 
 # =========================
 # Team

@@ -23,12 +23,17 @@ if __name__ == "__main__":
     # import numpy as np
 
     # l = GameLogic()
-    # l.map = Map([5, 5], [], [])
-    # l.map.static_map = np.array([[1, 0, 0, 0, 0],
-    #                              [0, 1, 0, 0, 0],
-    #                              [0, 0, 1, 0, 0],
-    #                              [0, 0, 0, 1, 0],
-    #                              [0, 0, 0, 0, 1]], dtype=StaticMapState)
+    # l.scenario.map = Map([5, 5], [
+    #       {"id": 0, "pos": [0,0]},
+    #       {"id": 1, "pos": [0,0]},
+    #       {"id": 2, "pos": [0,0]}], [{"id": 3, "pos": [0,0]},
+    #       {"id": 4, "pos": [0,0]},
+    #       {"id": 5, "pos": [0,0]}])
+    # l.scenario.map.static_map = np.array([[1, 0, 0, 0, 0],
+    #                                       [0, 1, 0, 0, 0],
+    #                                       [0, 0, 1, 0, 0],
+    #                                       [0, 0, 0, 1, 0],
+    #                                       [0, 0, 0, 0, 1]], dtype=StaticMapState)
 
-    # k = l.build_kernel([1, 3], 0)
+    # k = l.build_kernel([1, 2], 0)
     # print(k)

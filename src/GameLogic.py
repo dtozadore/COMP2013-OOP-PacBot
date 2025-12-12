@@ -35,9 +35,9 @@ class GameLogic:
             [{"id": 0, "pos": self.pacbot_spawn_pos},
              {"id": 1, "pos": self.pacbot_spawn_pos},
              {"id": 2, "pos": self.pacbot_spawn_pos},
-             {"id": 3, "pos": self.alien_spawn_pos},
-             {"id": 4, "pos": self.alien_spawn_pos},
-             {"id": 5, "pos": self.alien_spawn_pos}])
+             {"id": 3, "pos": [32, 22]},
+             {"id": 4, "pos": [32, 20]},
+             {"id": 5, "pos": [31, 21]}])
 
         self.pacbot_team = Team(
             (self.scenario.map.cols, self.scenario.map.rows))
@@ -61,19 +61,21 @@ class GameLogic:
         for entity_id, entity in enumerate([*self.pacbots, *self.aliens]):
             pos = self.scenario.map.get_dynamic(entity_id)
             kernel = self.build_kernel(pos, entity_id)
+            print(kernel)
 
             entity.update_view(kernel, pos)
 
         # Get desired movement for the aliens
         for entity_id, entity in enumerate(self.aliens):
-            pos = self.scenario.map.get_dynamic(entity_id)
+            pos = self.scenario.map.get_dynamic(len(self.pacbots) + entity_id)
             desired_dir = entity.move(pos)
 
             # Check desired direction for wall collision
-            new_pos = self.__move_coord(self.scenario.map.get_dynamic(
-                len(self.pacbots) + entity_id), desired_dir)
+            new_pos = self.__move_coord(pos, desired_dir)
+            print(pos, new_pos)
 
             check = self.scenario.map.get_static(new_pos)
+            print(check)
             if check is None or check > 1:
                 # Is a wall -> invalid move
                 continue
@@ -216,8 +218,8 @@ class GameLogic:
         elif direction == Direction.LEFT:
             new_coord[0] -= 1
 
-        new_coord[0] = clamp(new_coord[0], 0, self.scenario.map.rows)
-        new_coord[1] = clamp(new_coord[0], 0, self.scenario.map.cols)
+        new_coord[0] = clamp(new_coord[0], 0, self.scenario.map.cols)
+        new_coord[1] = clamp(new_coord[1], 0, self.scenario.map.rows)
 
         return new_coord
 
