@@ -28,17 +28,24 @@ class GameScene(Scene):
         background_tile = pygame.image.load("resources/art/background/background.png")
         self.background_tile = pygame.transform.scale(background_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
 
-        wall_vertical_tile = pygame.image.load("resources/art/background/walls/wall_vertical.png")
+        wall_vertical_tile = pygame.image.load("resources/art/walls/wall_2.png")
         self.wall_vertical_tile = pygame.transform.scale(wall_vertical_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
 
-        wall_horizontal_tile = pygame.image.load("resources/art/background/walls/wall_horizontal.png")
+        wall_horizontal_tile = pygame.image.load("resources/art/walls/wall_3.png")
         self.wall_horizontal_tile = pygame.transform.scale(wall_horizontal_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
 
-        wall_t_up_tile = pygame.image.load("resources/art/background/walls/wall_t_up.png")
+        wall_t_up_tile = pygame.image.load("resources/art/walls/wall_4.png")
         self.wall_t_up_tile = pygame.transform.scale(wall_t_up_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
 
-        wall_t_down_tile = pygame.image.load("resources/art/background/walls/wall_t_down.png")
+        wall_t_down_tile = pygame.image.load("resources/art/walls/wall_5.png")
         self.wall_t_down_tile = pygame.transform.scale(wall_t_down_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
+        
+        wall_t_top_right_tile = pygame.image.load("resources/art/walls/wall_6.png")
+        self.wall_t_top_right_tile = pygame.transform.scale(wall_t_top_right_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
+
+        wall_t_top_left_tile = pygame.image.load("resources/art/walls/wall_7.png")
+        self.wall_t_top_left_tile = pygame.transform.scale(wall_t_top_left_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size))) 
+        
         
         
         
