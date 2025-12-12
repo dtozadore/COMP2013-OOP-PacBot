@@ -105,34 +105,34 @@ class GameScene(Scene):
                 tile = self.map[j, i]
 
                 if tile is not None:
-                    if tile == StaticMapState.WALL_VERTICAL:
+                    if tile == StaticMapState.WALL_VERTICAL.value:
                         self.scene_manager.screen.blit(
                             self.wall_vertical_tile, (x, y))
-                    elif tile == StaticMapState.WALL_HORIZONTAL:
+                    elif tile == StaticMapState.WALL_HORIZONTAL.value:
                         self.scene_manager.screen.blit(
                             self.wall_horizontal_tile, (x, y))
-                    elif tile == StaticMapState.WALL_T_UP:
+                    elif tile == StaticMapState.WALL_T_UP.value:
                         self.scene_manager.screen.blit(
                             self.wall_t_up_tile, (x, y))
-                    elif tile == StaticMapState.WALL_T_DOWN:
+                    elif tile == StaticMapState.WALL_T_DOWN.value:
                         self.scene_manager.screen.blit(
                             self.wall_t_down_tile, (x, y))
-                    elif tile == StaticMapState.WALL_T_TOP_RIGHT:
+                    elif tile == StaticMapState.WALL_T_TOP_RIGHT.value:
                         self.scene_manager.screen.blit(
                             self.wall_t_top_right_tile, (x, y))
-                    elif tile == StaticMapState.WALL_T_TOP_LEFT:
+                    elif tile == StaticMapState.WALL_T_TOP_LEFT.value:
                         self.scene_manager.screen.blit(
                             self.wall_t_top_left_tile, (x, y))
-                    elif tile == StaticMapState.WALL_CORNER_NE:
+                    elif tile == StaticMapState.WALL_CORNER_NE.value:
                         self.scene_manager.screen.blit(
                             self.wall_corner_ne_tile, (x, y))
-                    elif tile == StaticMapState.WALL_CORNER_NW:
+                    elif tile == StaticMapState.WALL_CORNER_NW.value:
                         self.scene_manager.screen.blit(
                             self.wall_corner_nw_tile, (x, y))
-                    elif tile == StaticMapState.WALL_CORNER_SE:
+                    elif tile == StaticMapState.WALL_CORNER_SE.value:
                         self.scene_manager.screen.blit(
                             self.wall_corner_se_tile, (x, y))
-                    elif tile == StaticMapState.WALL_CORNER_SW:
+                    elif tile == StaticMapState.WALL_CORNER_SW.value:
                         self.scene_manager.screen.blit(
                             self.wall_corner_sw_tile, (x, y))
 
