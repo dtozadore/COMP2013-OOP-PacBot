@@ -1,5 +1,7 @@
+import pygame
 from src.window import Window
 
+FPS = 60
 
 def main():
     window = Window(current_scene="menu")
@@ -8,6 +10,7 @@ def main():
         window.handle_events()
         window.update()
         window.draw()
+        pygame.time.Clock().tick(FPS)
 
 
 if __name__ == "__main__":

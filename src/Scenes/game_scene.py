@@ -28,88 +28,42 @@ class GameScene(Scene):
         self.num_tiles_y = self.game_logic.scenario.map.rows
 
         # pixels per tile
-        tile_size = min(
-            screen_width /
-            self.num_tiles_x,
-            screen_height /
-            self.num_tiles_y)
+        tile_size = min(screen_width / self.num_tiles_x, screen_height / self.num_tiles_y)
         self.tile_size = tile_size
         self.pixel_scale_factor = self.tile_size / 16
 
-        background_tile = pygame.image.load(
-            "resources/art/background/background.png")
-        self.background_tile = pygame.transform.scale(
-            background_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        background_tile = pygame.image.load("resources/art/background/background.png")
+        self.background_tile = pygame.transform.scale(background_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
-        wall_vertical_tile = pygame.image.load(
-            "resources/art/walls/wall_2.png")
-        self.wall_vertical_tile = pygame.transform.scale(
-            wall_vertical_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        wall_vertical_tile = pygame.image.load("resources/art/walls/wall_2.png")
+        self.wall_vertical_tile = pygame.transform.scale(wall_vertical_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
-        wall_horizontal_tile = pygame.image.load(
-            "resources/art/walls/wall_3.png")
-        self.wall_horizontal_tile = pygame.transform.scale(
-            wall_horizontal_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        wall_horizontal_tile = pygame.image.load("resources/art/walls/wall_3.png")
+        self.wall_horizontal_tile = pygame.transform.scale(wall_horizontal_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
         wall_t_up_tile = pygame.image.load("resources/art/walls/wall_4.png")
-        self.wall_t_up_tile = pygame.transform.scale(
-            wall_t_up_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        self.wall_t_up_tile = pygame.transform.scale(wall_t_up_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
         wall_t_down_tile = pygame.image.load("resources/art/walls/wall_5.png")
-        self.wall_t_down_tile = pygame.transform.scale(
-            wall_t_down_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        self.wall_t_down_tile = pygame.transform.scale(wall_t_down_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
-        wall_t_top_right_tile = pygame.image.load(
-            "resources/art/walls/wall_6.png")
-        self.wall_t_top_right_tile = pygame.transform.scale(
-            wall_t_top_right_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        wall_t_top_right_tile = pygame.image.load("resources/art/walls/wall_6.png")
+        self.wall_t_top_right_tile = pygame.transform.scale(wall_t_top_right_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
-        wall_t_top_left_tile = pygame.image.load(
-            "resources/art/walls/wall_7.png")
-        self.wall_t_top_left_tile = pygame.transform.scale(
-            wall_t_top_left_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        wall_t_top_left_tile = pygame.image.load("resources/art/walls/wall_7.png")
+        self.wall_t_top_left_tile = pygame.transform.scale(wall_t_top_left_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
-        wall_corner_ne_tile = pygame.image.load(
-            "resources/art/walls/wall_8.png")
-        self.wall_corner_ne_tile = pygame.transform.scale(
-            wall_corner_ne_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        wall_corner_ne_tile = pygame.image.load("resources/art/walls/wall_8.png")
+        self.wall_corner_ne_tile = pygame.transform.scale(wall_corner_ne_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
-        wall_corner_nw_tile = pygame.image.load(
-            "resources/art/walls/wall_9.png")
-        self.wall_corner_nw_tile = pygame.transform.scale(
-            wall_corner_nw_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        wall_corner_nw_tile = pygame.image.load("resources/art/walls/wall_9.png")
+        self.wall_corner_nw_tile = pygame.transform.scale(wall_corner_nw_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
-        wall_corner_se_tile = pygame.image.load(
-            "resources/art/walls/wall_10.png")
-        self.wall_corner_se_tile = pygame.transform.scale(
-            wall_corner_se_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        wall_corner_se_tile = pygame.image.load("resources/art/walls/wall_10.png")
+        self.wall_corner_se_tile = pygame.transform.scale(wall_corner_se_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
-        wall_corner_sw_tile = pygame.image.load(
-            "resources/art/walls/wall_11.png")
-        self.wall_corner_sw_tile = pygame.transform.scale(
-            wall_corner_sw_tile, (math.ceil(
-                self.tile_size), math.ceil(
-                self.tile_size)))
+        wall_corner_sw_tile = pygame.image.load("resources/art/walls/wall_11.png")
+        self.wall_corner_sw_tile = pygame.transform.scale(wall_corner_sw_tile, (math.ceil(self.tile_size), math.ceil(self.tile_size)))
 
     def handle_events(self, events: list[pygame.event.Event]):
         pass
